@@ -27,12 +27,45 @@ import (
 type ApplicationSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+	Resorcegroup string            `json:"resourceGroup"`
+	Location     string            `json:"location"`
+	Tags         map[string]string `json:"tags,omitempty"`
+	Description  string            `json:"description,omitempty"`
+	Services     []Service         `json:"services,omitempty"`
+}
+
+type Service struct {
+	Name         string        `json:"name"`
+	Description  string        `json:"description"`
+	OsType       string        `json:"osType"`
+	ReplicaCount int32         `json:"replicaCount"`
+	CodePackages []CodePackage `json:"codePackages,omitempty"`
+	NetworkRefs  []string      `json:"networks,omitempty"`
+}
+
+type CodePackage struct {
+	Name      string     `json:"name"`
+	Image     string     `json:"image"`
+	EndPoints []EndPoint `json:"endPoints,omitempty"`
+
+	//TODO: Add More Service Options like commands
+}
+
+type EndPoint struct {
+	Name string `json:"name"`
+	Port int    `json:"port"`
 }
 
 // ApplicationStatus defines the observed state of Application
 type ApplicationStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+
+	ProvisioningState   string   `json:"provisioningState"`
+	HealthState         string   `json:"healthState"`
+	UnHealthyEvaulation string   `json:"unhealthyEvaluation"`
+	ServiceNames        []string `json:"serviceNames,omitempty"`
+	Status              string   `json:"status"`
 }
 
 // +genclient

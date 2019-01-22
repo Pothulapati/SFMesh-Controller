@@ -53,7 +53,7 @@ func newReconciler(mgr manager.Manager) reconcile.Reconciler {
 	client := mesh.NewApplicationClient("")
 
 	authorizer, err := auth.NewAuthorizerFromEnvironment()
-	if(err == nil) {
+	if err == nil {
 		client.Authorizer = authorizer
 		//Log
 	}
@@ -83,7 +83,7 @@ var _ reconcile.Reconciler = &ReconcileApplication{}
 // ReconcileApplication reconciles a Application object
 type ReconcileApplication struct {
 	client.Client
-	scheme *runtime.Scheme
+	scheme            *runtime.Scheme
 	applicationClient *mesh.ApplicationClient
 }
 
@@ -113,10 +113,9 @@ func (r *ReconcileApplication) Reconcile(request reconcile.Request) (reconcile.R
 	//Create the Application in SfMesh based on instance
 
 	appResourceDescription, err := sfmeshutil.CovertApplication(*instance)
-	result, err := r.applicationClient.Create(context.TODO(),"rg",instance.Name, *appResourceDescription)
-
+	result, err := r.applicationClient.Create(context.TODO(), "rg", instance.Name, *appResourceDescription)
+	print(result.Name)
 	//Update Status Based on the result
-
 
 	return reconcile.Result{}, nil
 }

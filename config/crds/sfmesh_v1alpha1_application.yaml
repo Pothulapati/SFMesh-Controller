@@ -27,8 +27,88 @@ spec:
         metadata:
           type: object
         spec:
+          properties:
+            description:
+              type: string
+            location:
+              type: string
+            resourceGroup:
+              description: 'INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
+                Important: Run "make" to regenerate code after modifying this file'
+              type: string
+            services:
+              items:
+                properties:
+                  codePackages:
+                    items:
+                      properties:
+                        endPoints:
+                          items:
+                            properties:
+                              name:
+                                type: string
+                              port:
+                                format: int64
+                                type: integer
+                            required:
+                            - name
+                            - port
+                            type: object
+                          type: array
+                        image:
+                          type: string
+                        name:
+                          type: string
+                      required:
+                      - name
+                      - image
+                      type: object
+                    type: array
+                  description:
+                    type: string
+                  name:
+                    type: string
+                  networks:
+                    items:
+                      type: string
+                    type: array
+                  osType:
+                    type: string
+                  replicaCount:
+                    format: int32
+                    type: integer
+                required:
+                - name
+                - description
+                - osType
+                - replicaCount
+                type: object
+              type: array
+            tags:
+              type: object
+          required:
+          - resourceGroup
+          - location
           type: object
         status:
+          properties:
+            healthState:
+              type: string
+            provisioningState:
+              type: string
+            serviceNames:
+              items:
+                type: string
+              type: array
+            status:
+              type: string
+            unhealthyEvaluation:
+              type: string
+          required:
+          - provisioningState
+          - healthState
+          - unhealthyEvaluation
+          - status
           type: object
   version: v1alpha1
 status:

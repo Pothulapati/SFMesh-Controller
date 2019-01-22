@@ -17,7 +17,6 @@ limitations under the License.
 package v1alpha1
 
 import (
-	"encoding/json"
 	"testing"
 
 	"github.com/onsi/gomega"
@@ -26,23 +25,20 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-func TestStorageApplication(t *testing.T) {
+func TestStorageNetwork(t *testing.T) {
 	key := types.NamespacedName{
 		Name:      "foo",
 		Namespace: "default",
 	}
-	created := &Application{
+	created := &Network{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "foo",
 			Namespace: "default",
 		}}
 	g := gomega.NewGomegaWithT(t)
-	println("-------------------------------------------")
-	b, _ := json.Marshal(created)
-	println(string(b))
-	println("-------------------------------------------")
+
 	// Test Create
-	fetched := &Application{}
+	fetched := &Network{}
 	g.Expect(c.Create(context.TODO(), created)).NotTo(gomega.HaveOccurred())
 
 	g.Expect(c.Get(context.TODO(), key, fetched)).NotTo(gomega.HaveOccurred())
