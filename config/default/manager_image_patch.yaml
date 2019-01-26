@@ -8,5 +8,12 @@ spec:
     spec:
       containers:
       # Change the value of image field below to your controller image URL
-      - image: IMAGE_URL
+      - image: tarunpothulapati/sfmeshmanager
         name: manager
+        env:
+        - name: AZURE_TENANT_ID
+          value: ""
+        - name: AZURE_CLIENT_ID
+          value: ""
+        - name: AZURE_CLIENT_SECRET
+          value: ""

@@ -20,9 +20,10 @@ import (
 	"flag"
 	"os"
 
+	"github.com/Azure/go-autorest/autorest/azure/auth"
+
 	"github.com/pothulapati/sfmesh-controller/pkg/apis"
 	"github.com/pothulapati/sfmesh-controller/pkg/controller"
-	"github.com/pothulapati/sfmesh-controller/pkg/webhook"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
@@ -61,17 +62,15 @@ func main() {
 		log.Error(err, "unable add APIs to scheme")
 		os.Exit(1)
 	}
-
 	// Setup all Controllers
 	log.Info("Setting up controller")
-	if err := controller.AddToManager(mgr); err != nil {
-		log.Error(err, "unable to register controllers to the manager")
-		os.Exit(1)
+	authorizer, err := auth.NewAuthorizerFromEnvironment()
+	if err != nil {
+		return
 	}
 
-	log.Info("setting up webhooks")
-	if err := webhook.AddToManager(mgr); err != nil {
-		log.Error(err, "unable to register webhooks to the manager")
+	if err := controller.AddToManager(mgr, authorizer); err != nil {
+		log.Error(err, "unable to register controllers to the manager")
 		os.Exit(1)
 	}
 

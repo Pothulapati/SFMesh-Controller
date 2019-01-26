@@ -27,11 +27,11 @@ import (
 type NetworkSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
-	Resorcegroup         string            `json:"resourceGroup"`
-	Location             string            `json:"location"`
-	Tags                 map[string]string `json:"tags,omitempty"`
-	NetworkAddressPrefix string            `json:"networkAddressPrefix"`
-	Description          string            `json:"description"`
+	Resorcegroup         string             `json:"resourceGroup"`
+	Location             string             `json:"location"`
+	Tags                 map[string]*string `json:"tags,omitempty"`
+	NetworkAddressPrefix string             `json:"networkAddressPrefix"`
+	Description          string             `json:"description"`
 }
 
 // NetworkStatus defines the observed state of Network

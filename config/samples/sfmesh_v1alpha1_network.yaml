@@ -6,4 +6,7 @@ metadata:
   name: network-sample
 spec:
   # Add fields here
-  foo: bar
+  resourceGroup: meshexp
+  location: eastus
+  networkAddressPrefix: "10.0.0.4/22"
+  description: "my networkpls"

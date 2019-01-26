@@ -18,8 +18,9 @@ package application
 
 import (
 	"context"
+
 	mesh "github.com/Azure/azure-sdk-for-go/services/preview/servicefabricmesh/mgmt/2018-09-01-preview/servicefabricmesh"
-	"github.com/Azure/go-autorest/autorest/azure/auth"
+	"github.com/Azure/go-autorest/autorest"
 	sfmeshv1alpha1 "github.com/pothulapati/sfmesh-controller/pkg/apis/sfmesh/v1alpha1"
 	"github.com/pothulapati/sfmesh-controller/pkg/sfmeshutil"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -35,29 +36,18 @@ import (
 
 var log = logf.Log.WithName("controller")
 
-/**
-* USER ACTION REQUIRED: This is a scaffold file intended for the user to modify with their own Controller
-* business logic.  Delete these comments after modifying this file.*
- */
-
 // Add creates a new Application Controller and adds it to the Manager with default RBAC. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
-func Add(mgr manager.Manager) error {
-	return add(mgr, newReconciler(mgr))
+func Add(mgr manager.Manager, auth autorest.Authorizer) error {
+	return add(mgr, newReconciler(mgr, auth))
 }
 
 // newReconciler returns a new reconcile.Reconciler
-func newReconciler(mgr manager.Manager) reconcile.Reconciler {
+func newReconciler(mgr manager.Manager, authorizer autorest.Authorizer) reconcile.Reconciler {
 	//Create the app Client
 
 	client := mesh.NewApplicationClient("")
-
-	authorizer, err := auth.NewAuthorizerFromEnvironment()
-	if err == nil {
-		client.Authorizer = authorizer
-		//Log
-	}
-
+	client.Authorizer = authorizer
 	return &ReconcileApplication{Client: mgr.GetClient(), scheme: mgr.GetScheme(), applicationClient: &client}
 }
 
@@ -111,10 +101,12 @@ func (r *ReconcileApplication) Reconcile(request reconcile.Request) (reconcile.R
 	}
 
 	//Create the Application in SfMesh based on instance
-
+	log.Info("Creating Application")
 	appResourceDescription, err := sfmeshutil.CovertApplication(*instance)
-	result, err := r.applicationClient.Create(context.TODO(), "rg", instance.Name, *appResourceDescription)
-	print(result.Name)
+	_, err = r.applicationClient.Create(context.TODO(), "rg", instance.Name, *appResourceDescription)
+	if err != nil {
+		log.Info(err.Error())
+	}
 	//Update Status Based on the result
 
 	return reconcile.Result{}, nil

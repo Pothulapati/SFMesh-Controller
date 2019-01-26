@@ -6,4 +6,17 @@ metadata:
   name: application-sample
 spec:
   # Add fields here
-  foo: bar
+  osType: Linux
+  codePackages:
+    - name: helloWorldCode
+      image: "seabreeze/sbz-helloworld:1.0-alpine"
+      endpoints:
+        - name: "helloworld"
+          port: 80
+      resources:
+        requests:
+          memoryInGB: 1
+          cpu: 1
+  description: "something"
+  location: "eastus"
+  resourceGroup: "default"

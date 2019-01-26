@@ -18,6 +18,7 @@ package volume
 
 import (
 	"context"
+	"github.com/Azure/go-autorest/autorest"
 	"reflect"
 
 	sfmeshv1alpha1 "github.com/pothulapati/sfmesh-controller/pkg/apis/sfmesh/v1alpha1"
@@ -46,12 +47,12 @@ var log = logf.Log.WithName("controller")
 
 // Add creates a new Volume Controller and adds it to the Manager with default RBAC. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
-func Add(mgr manager.Manager) error {
-	return add(mgr, newReconciler(mgr))
+func Add(mgr manager.Manager, auth autorest.Authorizer) error {
+	return add(mgr, newReconciler(mgr, auth))
 }
 
 // newReconciler returns a new reconcile.Reconciler
-func newReconciler(mgr manager.Manager) reconcile.Reconciler {
+func newReconciler(mgr manager.Manager, auth autorest.Authorizer) reconcile.Reconciler {
 	return &ReconcileVolume{Client: mgr.GetClient(), scheme: mgr.GetScheme()}
 }
 

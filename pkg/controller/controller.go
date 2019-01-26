@@ -17,16 +17,17 @@ limitations under the License.
 package controller
 
 import (
+	"github.com/Azure/go-autorest/autorest"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 )
 
 // AddToManagerFuncs is a list of functions to add all Controllers to the Manager
-var AddToManagerFuncs []func(manager.Manager) error
+var AddToManagerFuncs []func(manager.Manager, autorest.Authorizer) error
 
 // AddToManager adds all Controllers to the Manager
-func AddToManager(m manager.Manager) error {
+func AddToManager(m manager.Manager, authorizer autorest.Authorizer) error {
 	for _, f := range AddToManagerFuncs {
-		if err := f(m); err != nil {
+		if err := f(m, authorizer); err != nil {
 			return err
 		}
 	}

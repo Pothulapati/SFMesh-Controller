@@ -12,3 +12,18 @@ func CovertApplication(application v1alpha1.Application) (*mesh.ApplicationResou
 	}
 	return &appResourceDescription, nil
 }
+
+func ConvertNetwork(network v1alpha1.Network) (*mesh.NetworkResourceDescription, error) {
+
+	basicNetworkProperties := mesh.LocalNetworkResourceProperties{
+		NetworkAddressPrefix: &network.Spec.NetworkAddressPrefix,
+		Description:          &network.Spec.Description,
+	}
+	networkRD := mesh.NetworkResourceDescription{
+		Name:       &network.Name,
+		Location:   &network.Spec.Location,
+		Tags:       network.Spec.Tags,
+		Properties: &basicNetworkProperties,
+	}
+	return &networkRD, nil
+}
