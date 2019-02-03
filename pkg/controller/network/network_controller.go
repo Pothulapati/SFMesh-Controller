@@ -18,7 +18,7 @@ package network
 
 import (
 	"context"
-
+	"fmt"
 	"github.com/pothulapati/sfmesh-controller/pkg/sfmeshutil"
 
 	mesh "github.com/Azure/azure-sdk-for-go/services/preview/servicefabricmesh/mgmt/2018-09-01-preview/servicefabricmesh"
@@ -51,7 +51,7 @@ func Add(mgr manager.Manager, authorizer autorest.Authorizer) error {
 // newReconciler returns a new reconcile.Reconciler
 func newReconciler(mgr manager.Manager, authorizer autorest.Authorizer) reconcile.Reconciler {
 
-	client := mesh.NewNetworkClient("77b24004-873e-4e79-9c55-be1e465fa115")
+	client := mesh.NewNetworkClient("")
 	client.Authorizer = authorizer
 	return &ReconcileNetwork{Client: mgr.GetClient(), scheme: mgr.GetScheme(), networkClient: &client}
 }
@@ -103,9 +103,12 @@ func (r *ReconcileNetwork) Reconcile(request reconcile.Request) (reconcile.Resul
 		// Error reading the object - requeue the request.
 		return reconcile.Result{}, err
 	}
-	log.Info("Creating Bro")
+
+	//TODO: Check the NetworkRD, if it already exists then update/
+
 	//Convert the instance itno sfmesh.NetworkResourceProperties
 	networkRD, _ := sfmeshutil.ConvertNetwork(*instance)
+	log.Info(fmt.Sprintf("Creating Network Resource %s", instance.Name))
 	_, err = r.networkClient.Create(context.Background(), instance.ObjectMeta.Namespace, instance.Name, *networkRD)
 	if err != nil {
 		log.Info(err.Error())

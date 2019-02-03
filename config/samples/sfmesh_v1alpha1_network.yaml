@@ -3,10 +3,10 @@ kind: Network
 metadata:
   labels:
     controller-tools.k8s.io: "1.0"
-  name: network-sample
+  name: network-sampless
 spec:
   # Add fields here
   resourceGroup: meshexp
   location: eastus
   networkAddressPrefix: "10.0.0.4/22"
-  description: "my networkpls"
+  description: "my networkplssds"

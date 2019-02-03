@@ -53,7 +53,7 @@ type CodePackage struct {
 
 type EndPoint struct {
 	Name string `json:"name"`
-	Port int    `json:"port"`
+	Port int32  `json:"port"`
 }
 
 // ApplicationStatus defines the observed state of Application

@@ -3,20 +3,20 @@ kind: Application
 metadata:
   labels:
     controller-tools.k8s.io: "1.0"
-  name: application-sample
+  name: applicationsam
 spec:
   # Add fields here
-  osType: Linux
-  codePackages:
-    - name: helloWorldCode
-      image: "seabreeze/sbz-helloworld:1.0-alpine"
-      endpoints:
-        - name: "helloworld"
-          port: 80
-      resources:
-        requests:
-          memoryInGB: 1
-          cpu: 1
+  services:
+    - name: "myyservice"
+      replicaCount: 1
+      description: "Awesome Service"
+      osType: Linux
+      codePackages:
+        - name: helloWorldCode
+          image: "seabreeze/sbz-helloworld:1.0-alpine"
+          endpoints:
+            - name: "helloworld"
+              port: 80
   description: "something"
   location: "eastus"
   resourceGroup: "default"

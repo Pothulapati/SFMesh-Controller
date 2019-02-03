@@ -18,6 +18,7 @@ package application
 
 import (
 	"context"
+	"fmt"
 
 	mesh "github.com/Azure/azure-sdk-for-go/services/preview/servicefabricmesh/mgmt/2018-09-01-preview/servicefabricmesh"
 	"github.com/Azure/go-autorest/autorest"
@@ -101,13 +102,15 @@ func (r *ReconcileApplication) Reconcile(request reconcile.Request) (reconcile.R
 	}
 
 	//Create the Application in SfMesh based on instance
-	log.Info("Creating Application")
+	log.Info(fmt.Sprintf("Creating Application Resource %s", instance.Name))
 	appResourceDescription, err := sfmeshutil.CovertApplication(*instance)
-	_, err = r.applicationClient.Create(context.TODO(), "rg", instance.Name, *appResourceDescription)
+	result, err := r.applicationClient.Create(context.TODO(), "default", instance.Name, *appResourceDescription)
 	if err != nil {
 		log.Info(err.Error())
 	}
-	//Update Status Based on the result
 
+	log.Info("Creation Done")
+	log.Info(fmt.Sprintln(result.Status))
+	//Update Status Based on the result
 	return reconcile.Result{}, nil
 }

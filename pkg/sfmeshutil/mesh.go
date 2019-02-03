@@ -7,8 +7,52 @@ import (
 
 func CovertApplication(application v1alpha1.Application) (*mesh.ApplicationResourceDescription, error) {
 
+	var MeshServices []mesh.ServiceResourceDescription
+	for _, service := range application.Spec.Services {
+
+		//Get All Code Packages for this service
+		var codepkgs []mesh.ContainerCodePackageProperties
+
+		for _, codepkg := range service.CodePackages {
+			var meshEndpoints []mesh.EndpointProperties
+			for _, endpoint := range codepkg.EndPoints {
+				meshEndpoint := mesh.EndpointProperties{
+					Name: &endpoint.Name,
+					Port: &endpoint.Port,
+				}
+
+				meshEndpoints = append(meshEndpoints, meshEndpoint)
+			}
+
+			meshcodepkg := mesh.ContainerCodePackageProperties{
+				Name:      &codepkg.Name,
+				Image:     &codepkg.Image,
+				Endpoints: &meshEndpoints,
+			}
+			codepkgs = append(codepkgs, meshcodepkg)
+		}
+
+		meshService := mesh.ServiceResourceDescription{
+			Name: &service.Name,
+
+			ServiceResourceProperties: &mesh.ServiceResourceProperties{
+				OsType:       mesh.Linux,
+				CodePackages: &codepkgs,
+				ReplicaCount: &service.ReplicaCount,
+			},
+		}
+		MeshServices = append(MeshServices, meshService)
+	}
+
+	applicationRP := &mesh.ApplicationResourceProperties{
+		Description: &application.Spec.Description,
+		Services:    &MeshServices,
+	}
+
 	appResourceDescription := mesh.ApplicationResourceDescription{
-		Name: &application.Name,
+		Name:                          &application.Name,
+		Location:                      &application.Spec.Location,
+		ApplicationResourceProperties: applicationRP,
 	}
 	return &appResourceDescription, nil
 }
