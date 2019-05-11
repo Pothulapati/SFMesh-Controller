@@ -51,7 +51,7 @@ func Add(mgr manager.Manager, authorizer autorest.Authorizer) error {
 // newReconciler returns a new reconcile.Reconciler
 func newReconciler(mgr manager.Manager, authorizer autorest.Authorizer) reconcile.Reconciler {
 
-	client := mesh.NewNetworkClient("")
+	client := mesh.NewNetworkClient(sfmeshutil.Subscription)
 	client.Authorizer = authorizer
 	return &ReconcileNetwork{Client: mgr.GetClient(), scheme: mgr.GetScheme(), networkClient: &client}
 }
@@ -104,12 +104,14 @@ func (r *ReconcileNetwork) Reconcile(request reconcile.Request) (reconcile.Resul
 		return reconcile.Result{}, err
 	}
 
-	//TODO: Check the NetworkRD, if it already exists then update/
-
 	//Convert the instance itno sfmesh.NetworkResourceProperties
 	networkRD, _ := sfmeshutil.ConvertNetwork(*instance)
-	log.Info(fmt.Sprintf("Creating Network Resource %s", instance.Name))
-	_, err = r.networkClient.Create(context.Background(), instance.ObjectMeta.Namespace, instance.Name, *networkRD)
+
+	//TODO:: Update the status of CR based on the status
+
+	//Creates if not present, updates if already resent.
+	log.Info(fmt.Sprintf("Reconciling Network Resource %s", instance.Name))
+	_, err = r.networkClient.Create(context.Background(), instance.Spec.Resorcegroup, instance.Name, *networkRD)
 	if err != nil {
 		log.Info(err.Error())
 	}

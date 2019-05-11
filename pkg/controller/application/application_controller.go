@@ -47,7 +47,7 @@ func Add(mgr manager.Manager, auth autorest.Authorizer) error {
 func newReconciler(mgr manager.Manager, authorizer autorest.Authorizer) reconcile.Reconciler {
 	//Create the app Client
 
-	client := mesh.NewApplicationClient("")
+	client := mesh.NewApplicationClient(sfmeshutil.Subscription)
 	client.Authorizer = authorizer
 	return &ReconcileApplication{Client: mgr.GetClient(), scheme: mgr.GetScheme(), applicationClient: &client}
 }
@@ -101,16 +101,17 @@ func (r *ReconcileApplication) Reconcile(request reconcile.Request) (reconcile.R
 		return reconcile.Result{}, err
 	}
 
-	//Create the Application in SfMesh based on instance
-	log.Info(fmt.Sprintf("Creating Application Resource %s", instance.Name))
+	//Creates or Updates the Application.
+	log.Info(fmt.Sprintf("Reconciling Application Resource %s", instance.Name))
 	appResourceDescription, err := sfmeshutil.CovertApplication(*instance)
-	result, err := r.applicationClient.Create(context.TODO(), "default", instance.Name, *appResourceDescription)
+	js, _ := appResourceDescription.MarshalJSON()
+	log.Info(string(js))
+	result, err := r.applicationClient.Create(context.TODO(), instance.Spec.Resorcegroup, instance.Name, *appResourceDescription)
 	if err != nil {
 		log.Info(err.Error())
 	}
 
-	log.Info("Creation Done")
-	log.Info(fmt.Sprintln(result.Status))
+	log.Info(*result.ProvisioningState)
 	//Update Status Based on the result
 	return reconcile.Result{}, nil
 }

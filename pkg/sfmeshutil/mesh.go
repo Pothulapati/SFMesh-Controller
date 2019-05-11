@@ -1,9 +1,16 @@
 package sfmeshutil
 
 import (
+	"fmt"
+
 	mesh "github.com/Azure/azure-sdk-for-go/services/preview/servicefabricmesh/mgmt/2018-09-01-preview/servicefabricmesh"
 	"github.com/pothulapati/sfmesh-controller/pkg/apis/sfmesh/v1alpha1"
+	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 )
+
+var log = logf.Log.WithName("SfmeshUtil")
+
+const Subscription = ""
 
 func CovertApplication(application v1alpha1.Application) (*mesh.ApplicationResourceDescription, error) {
 
@@ -14,13 +21,14 @@ func CovertApplication(application v1alpha1.Application) (*mesh.ApplicationResou
 		var codepkgs []mesh.ContainerCodePackageProperties
 
 		for _, codepkg := range service.CodePackages {
+			fmt.Print("Working on", codepkg.Name)
 			var meshEndpoints []mesh.EndpointProperties
 			for _, endpoint := range codepkg.EndPoints {
 				meshEndpoint := mesh.EndpointProperties{
 					Name: &endpoint.Name,
 					Port: &endpoint.Port,
 				}
-
+				fmt.Println(meshEndpoint.Name, " ", meshEndpoint.Port, " for ", codepkg.Name)
 				meshEndpoints = append(meshEndpoints, meshEndpoint)
 			}
 
@@ -29,6 +37,7 @@ func CovertApplication(application v1alpha1.Application) (*mesh.ApplicationResou
 				Image:     &codepkg.Image,
 				Endpoints: &meshEndpoints,
 			}
+
 			codepkgs = append(codepkgs, meshcodepkg)
 		}
 

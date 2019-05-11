@@ -3,11 +3,11 @@ kind: Application
 metadata:
   labels:
     controller-tools.k8s.io: "1.0"
-  name: applicationsam
+  name: applicatio-snsam
 spec:
   # Add fields here
   services:
-    - name: "myyservice"
+    - name: "my--service"
       replicaCount: 1
       description: "Awesome Service"
       osType: Linux

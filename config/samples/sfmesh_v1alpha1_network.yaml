@@ -9,4 +9,4 @@ spec:
   resourceGroup: meshexp
   location: eastus
   networkAddressPrefix: "10.0.0.4/22"
-  description: "my networkplssds"
+  description: "my networkplssdsss"
